@@ -1,0 +1,8 @@
+.home-page {
+    min-height: 80vh;
+    padding-top: 2rem;
+  }
+  
+.shadow-lg {
+    box-shadow: 0 1rem 3rem rgba(0,0,0,.175) !important;
+}

@@ -1,0 +1,65 @@
+import React from 'react';
+import { Card, Button, Container, Row, Col } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
+import './HomePage.css';
+
+const HomePage = () => {
+  const miniCards = [
+    {
+      id: 1,
+      image: '/arabes1.jpg',
+      text: 'Gang',
+    },
+    {
+      id: 2,
+      image: '/imaluca.jpg',
+      text: 'Inteligência Maluca!',
+    },
+    {
+      id: 3,
+      image: '/arabes2.jpg',
+      text: 'Gang',
+    }
+  ];
+
+  return (
+    <Container className="home-page">
+      <h1 className="text-center my-5">Bem-vindo ao blog dos Árabes</h1>
+
+      {/* Seção principal */}
+      <Card className="shadow-lg mb-5">
+        <Card.Body className="text-center">
+          <Card.Title className="display-4 mb-4">🎵 Notícias & Músicas</Card.Title>
+          <Card.Text className="lead">
+            Descubra os últimos lançamentos e as fofocas mais quentes sobre o grupo!
+          </Card.Text>
+          <div className="d-flex justify-content-center mt-3">
+            <Button as={Link} to="/media" variant="primary" size="lg">Ver Músicas</Button>
+            <Button as={Link} to="/news" variant="primary" size="lg" className="ms-2">Ver Notícias</Button>
+          </div>
+        </Card.Body>
+      </Card>
+
+      {/* Mini cards personalizados */}
+      <Row className="g-3 mb-5">
+        {miniCards.map((card) => (
+          <Col key={card.id} xs={12} md={4}>
+            <Card className="h-100 shadow-sm mini-card">
+              <Card.Img 
+                variant="top" 
+                src={card.image} 
+                style={{ height: '300px', objectFit: 'cover' }} 
+                alt="Card image"
+              />
+              <Card.Body className="d-flex flex-column">
+                <Card.Text>{card.text}</Card.Text>
+              </Card.Body>
+            </Card>
+          </Col>
+        ))}
+      </Row>
+    </Container>
+  );
+};
+
+export default HomePage;
