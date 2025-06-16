@@ -14,7 +14,7 @@ const MediaPage = () => {
   useEffect(() => {
     const fetchMedia = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/media');
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/media`);
         setMediaList(Array.isArray(res.data) ? res.data : []);
       } catch (err) {
         console.error('Erro ao carregar mídias:', err);
@@ -112,7 +112,7 @@ const MediaPage = () => {
                         variant="outline-dark"
                         size="sm"
                         className="download-button"
-                        onClick={() => window.open(`http://localhost:5000/api/media/download/${media._id}`, '_blank')}
+                        onClick={() => window.open(`${process.env.REACT_APP_API_URL}/api/media/download/${media._id}`, '_blank')}
                       >
                         <FaDownload className="me-1" />
                         Baixar

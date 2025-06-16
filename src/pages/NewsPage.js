@@ -15,7 +15,7 @@ const NewsPage = () => {
         setIsLoading(true);
         setError(null);
 
-        const response = await axios.get('http://localhost:5000/api/news');
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/news`);
         if (!response.data) throw new Error('Resposta da API vazia ou inválida');
 
         const newsData = Array.isArray(response.data)
