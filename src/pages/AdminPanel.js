@@ -3,13 +3,15 @@ import { Tab, Tabs, Container, Form, Button, Alert, Spinner, Modal, Table } from
 import axios from 'axios';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 
+const API = process.env.REACT_APP_API_URL;
+
 const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState('news');
   const [newsData, setNewsData] = useState({
     title: '',
     content: '',
     category: 'geral',
-    videoUrl: '' // novo campo para URL do vídeo
+    videoUrl: ''
   });
   const [mediaData, setMediaData] = useState({
     title: '',
@@ -38,7 +40,7 @@ const AdminPanel = () => {
 
   const fetchMediaList = async () => {
     try {
-      const res = await axios.get('/api/media');
+      const res = await axios.get(`${API}/api/media`);
       setMediaList(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error('Erro ao carregar músicas:', err);
@@ -52,7 +54,7 @@ const AdminPanel = () => {
 
   const fetchNewsList = async () => {
     try {
-      const res = await axios.get('/api/news');
+      const res = await axios.get(`${API}/api/news`);
       const data = res.data?.data || res.data;
       setNewsList(Array.isArray(data) ? data : []);
     } catch (err) {
@@ -78,7 +80,7 @@ const AdminPanel = () => {
     if (newsImage) formData.append('image', newsImage);
 
     try {
-      const url = editingNews ? `/api/news/${editingNews._id}` : '/api/news';
+      const url = editingNews ? `${API}/api/news/${editingNews._id}` : `${API}/api/news`;
       const method = editingNews ? 'put' : 'post';
 
       await axios[method](url, formData, {
@@ -116,14 +118,14 @@ const AdminPanel = () => {
     const formData = new FormData();
     formData.append('title', mediaData.title);
     formData.append('artist', mediaData.artist);
-    formData.append('category', 'music'); // Forçando apenas músicas
+    formData.append('category', 'music');
 
     if (mediaFile) formData.append('file', mediaFile);
     if (mediaThumbnail) formData.append('thumbnail', mediaThumbnail);
     if (editingMedia) formData.append('_id', editingMedia._id);
 
     try {
-      const url = editingMedia ? `/api/media/${editingMedia._id}` : '/api/media';
+      const url = editingMedia ? `${API}/api/media/${editingMedia._id}` : `${API}/api/media`;
       const method = editingMedia ? 'put' : 'post';
 
       await axios[method](url, formData, {
