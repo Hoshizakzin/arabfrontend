@@ -31,7 +31,7 @@ const NewsDetailPage = () => {
         {article.imageUrl && (
           <Card.Img 
             variant="top" 
-            src={article.imageUrl} 
+            src={`${process.env.REACT_APP_API_URL}${article.imageUrl}`}
             style={{ maxHeight: '500px', objectFit: 'cover' }} 
           />
         )}

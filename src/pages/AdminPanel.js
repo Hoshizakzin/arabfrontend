@@ -9,7 +9,7 @@ const AdminPanel = () => {
     title: '',
     content: '',
     category: 'geral',
-    videoUrl: '' // novo campo para URL do vídeo
+    videoUrl: ''
   });
   const [mediaData, setMediaData] = useState({
     title: '',
@@ -38,7 +38,7 @@ const AdminPanel = () => {
 
   const fetchMediaList = async () => {
     try {
-      const res = await axios.get('/api/media');
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/media`);
       setMediaList(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error('Erro ao carregar músicas:', err);
@@ -52,7 +52,7 @@ const AdminPanel = () => {
 
   const fetchNewsList = async () => {
     try {
-      const res = await axios.get('/api/news');
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/news`);
       const data = res.data?.data || res.data;
       setNewsList(Array.isArray(data) ? data : []);
     } catch (err) {
@@ -74,11 +74,13 @@ const AdminPanel = () => {
     formData.append('title', newsData.title);
     formData.append('content', newsData.content);
     formData.append('category', newsData.category);
-    formData.append('videoUrl', newsData.videoUrl || '');
+    if (newsData.videoUrl) formData.append('videoUrl', newsData.videoUrl);
     if (newsImage) formData.append('image', newsImage);
 
     try {
-      const url = editingNews ? `/api/news/${editingNews._id}` : '/api/news';
+      const url = editingNews
+        ? `${process.env.REACT_APP_API_URL}/api/news/${editingNews._id}`
+        : `${process.env.REACT_APP_API_URL}/api/news`;
       const method = editingNews ? 'put' : 'post';
 
       await axios[method](url, formData, {
@@ -116,14 +118,15 @@ const AdminPanel = () => {
     const formData = new FormData();
     formData.append('title', mediaData.title);
     formData.append('artist', mediaData.artist);
-    formData.append('category', 'music'); // Forçando apenas músicas
-
+    formData.append('category', 'music'); // Forçar tipo música
     if (mediaFile) formData.append('file', mediaFile);
     if (mediaThumbnail) formData.append('thumbnail', mediaThumbnail);
     if (editingMedia) formData.append('_id', editingMedia._id);
 
     try {
-      const url = editingMedia ? `/api/media/${editingMedia._id}` : '/api/media';
+      const url = editingMedia
+        ? `${process.env.REACT_APP_API_URL}/api/media/${editingMedia._id}`
+        : `${process.env.REACT_APP_API_URL}/api/media`;
       const method = editingMedia ? 'put' : 'post';
 
       await axios[method](url, formData, {
@@ -169,7 +172,7 @@ const AdminPanel = () => {
     setMediaData({
       title: media.title || '',
       artist: media.artist || '',
-      category: 'music' // Forçando apenas músicas
+      category: 'music'
     });
   };
 
@@ -184,19 +187,19 @@ const AdminPanel = () => {
       const headers = {
         'Authorization': `Bearer ${localStorage.getItem('token')}`
       };
-  
+
       if (itemToDelete.type === 'news') {
-        await axios.delete(`/api/news/${itemToDelete.data._id}`, { headers });
+        await axios.delete(`${process.env.REACT_APP_API_URL}/api/news/${itemToDelete.data._id}`, { headers });
         setMessage({ type: 'success', text: 'Notícia removida com sucesso!' });
         fetchNewsList();
       } else if (itemToDelete.type === 'media') {
-        await axios.delete(`/api/media/${itemToDelete.data._id}`, { headers });
+        await axios.delete(`${process.env.REACT_APP_API_URL}/api/media/${itemToDelete.data._id}`, { headers });
         setMessage({ type: 'success', text: 'Música removida com sucesso!' });
         fetchMediaList();
       } else if (itemToDelete.type === 'admin') {
-        await axios.delete(`/api/admins/${itemToDelete.data._id}`, { headers });
+        await axios.delete(`${process.env.REACT_APP_API_URL}/api/admins/${itemToDelete.data._id}`, { headers });
         setMessage({ type: 'success', text: 'Administrador removido com sucesso!' });
-        fetchAdmins(); // ⚠️ Certifique-se que esta função existe e está implementada!
+        fetchAdmins();
       }
     } catch (err) {
       console.error('Erro ao remover item:', err);
@@ -210,7 +213,6 @@ const AdminPanel = () => {
       setItemToDelete({ type: '', data: null });
     }
   };
-  
 
   const resetNewsForm = () => {
     setNewsData({ title: '', content: '', category: 'geral', videoUrl: '' });
@@ -225,38 +227,38 @@ const AdminPanel = () => {
     setEditingMedia(null);
   };
 
-const [admins, setAdmins] = useState([]);
-const [adminData, setAdminData] = useState({ fullName: '', username: '', password: '' });
+  const [admins, setAdmins] = useState([]);
+  const [adminData, setAdminData] = useState({ fullName: '', username: '', password: '' });
 
-const fetchAdmins = async () => {
-  try {
-    const res = await axios.get('/api/admins', {
-      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-    });
-    setAdmins(Array.isArray(res.data) ? res.data : []);
-  } catch (err) {
-    console.error('Erro ao buscar admins:', err);
-  }
-};
+  const fetchAdmins = async () => {
+    try {
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/admins`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      });
+      setAdmins(Array.isArray(res.data) ? res.data : []);
+    } catch (err) {
+      console.error('Erro ao buscar admins:', err);
+    }
+  };
 
-useEffect(() => {
-  if (activeTab === 'admins') fetchAdmins();
-}, [activeTab]);
+  useEffect(() => {
+    if (activeTab === 'admins') fetchAdmins();
+  }, [activeTab]);
 
-const handleAdminSubmit = async (e) => {
-  e.preventDefault();
-  try {
-    await axios.post('/api/admins', adminData, {
-      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-    });
-    setAdminData({ fullName: '', username: '', password: '' });
-    fetchAdmins();
-    setMessage({ type: 'success', text: 'Administrador cadastrado com sucesso!' });
-  } catch (err) {
-    console.error('Erro ao cadastrar admin:', err);
-    setMessage({ type: 'danger', text: 'Erro ao cadastrar administrador' });
-  }
-};
+  const handleAdminSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/admins`, adminData, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      });
+      setAdminData({ fullName: '', username: '', password: '' });
+      fetchAdmins();
+      setMessage({ type: 'success', text: 'Administrador cadastrado com sucesso!' });
+    } catch (err) {
+      console.error('Erro ao cadastrar admin:', err);
+      setMessage({ type: 'danger', text: 'Erro ao cadastrar administrador' });
+    }
+  };
 
   return (
     <Container className="my-5">
@@ -510,7 +512,7 @@ const handleAdminSubmit = async (e) => {
                 <tbody>
                   {Array.isArray(mediaList) && mediaList.length > 0 ? (
                     mediaList.map((media) => (
-                      <tr key={media._id || Math.random().toString(36).substr(2, 9)}>
+                      <tr key={media._id}>
                         <td>{media.title || 'Sem título'}</td>
                         <td>{media.artist || '-'}</td>
                         <td>
@@ -540,7 +542,7 @@ const handleAdminSubmit = async (e) => {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="4" className="text-center">
+                      <td colSpan="5" className="text-center">
                         Nenhuma música encontrada
                       </td>
                     </tr>
@@ -559,7 +561,7 @@ const handleAdminSubmit = async (e) => {
         <Form.Control
           type="text"
           required
-          value={adminData.fullNname}
+          value={adminData.fullName}
           onChange={(e) => setAdminData({ ...adminData, fullName: e.target.value })}
         />
       </Form.Group>
@@ -629,7 +631,7 @@ const handleAdminSubmit = async (e) => {
           <Modal.Title>Confirmar Exclusão</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          Tem certeza que deseja excluir este {'admin' === itemToDelete.type ? 'administrador' : itemToDelete.type === 'news' ? 'notícia' : 'item de mídia'}?
+        Tem certeza que deseja excluir este {itemToDelete?.type === 'admin' ? 'administrador' : itemToDelete?.type === 'news' ? 'notícia' : 'item de mídia'}?
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
