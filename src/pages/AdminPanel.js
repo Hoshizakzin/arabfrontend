@@ -3,15 +3,13 @@ import { Tab, Tabs, Container, Form, Button, Alert, Spinner, Modal, Table } from
 import axios from 'axios';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 
-const API = process.env.REACT_APP_API_URL;
-
 const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState('news');
   const [newsData, setNewsData] = useState({
     title: '',
     content: '',
     category: 'geral',
-    videoUrl: ''
+    videoUrl: '' // novo campo para URL do vídeo
   });
   const [mediaData, setMediaData] = useState({
     title: '',
@@ -30,18 +28,17 @@ const AdminPanel = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState({ type: '', data: null });
 
-  const [admins, setAdmins] = useState([]);
-  const [adminData, setAdminData] = useState({ fullName: '', username: '', password: '' });
-
   useEffect(() => {
-    if (activeTab === 'media') fetchMediaList();
-    else if (activeTab === 'news') fetchNewsList();
-    else if (activeTab === 'admins') fetchAdmins();
+    if (activeTab === 'media') {
+      fetchMediaList();
+    } else if (activeTab === 'news') {
+      fetchNewsList();
+    }
   }, [activeTab]);
 
   const fetchMediaList = async () => {
     try {
-      const res = await axios.get(`${API}/api/media`);
+      const res = await axios.get('/api/media');
       setMediaList(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error('Erro ao carregar músicas:', err);
@@ -55,7 +52,7 @@ const AdminPanel = () => {
 
   const fetchNewsList = async () => {
     try {
-      const res = await axios.get(`${API}/api/news`);
+      const res = await axios.get('/api/news');
       const data = res.data?.data || res.data;
       setNewsList(Array.isArray(data) ? data : []);
     } catch (err) {
@@ -65,17 +62,6 @@ const AdminPanel = () => {
         text: 'Erro ao carregar lista de notícias'
       });
       setNewsList([]);
-    }
-  };
-
-  const fetchAdmins = async () => {
-    try {
-      const res = await axios.get(`${API}/api/admins`, {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-      });
-      setAdmins(Array.isArray(res.data) ? res.data : []);
-    } catch (err) {
-      console.error('Erro ao buscar admins:', err);
     }
   };
 
@@ -92,9 +78,7 @@ const AdminPanel = () => {
     if (newsImage) formData.append('image', newsImage);
 
     try {
-      const url = editingNews
-        ? `${API}/api/news/${editingNews._id}`
-        : `${API}/api/news`;
+      const url = editingNews ? `/api/news/${editingNews._id}` : '/api/news';
       const method = editingNews ? 'put' : 'post';
 
       await axios[method](url, formData, {
@@ -132,16 +116,14 @@ const AdminPanel = () => {
     const formData = new FormData();
     formData.append('title', mediaData.title);
     formData.append('artist', mediaData.artist);
-    formData.append('category', 'music');
+    formData.append('category', 'music'); // Forçando apenas músicas
 
     if (mediaFile) formData.append('file', mediaFile);
     if (mediaThumbnail) formData.append('thumbnail', mediaThumbnail);
     if (editingMedia) formData.append('_id', editingMedia._id);
 
     try {
-      const url = editingMedia
-        ? `${API}/api/media/${editingMedia._id}`
-        : `${API}/api/media`;
+      const url = editingMedia ? `/api/media/${editingMedia._id}` : '/api/media';
       const method = editingMedia ? 'put' : 'post';
 
       await axios[method](url, formData, {
@@ -172,21 +154,6 @@ const AdminPanel = () => {
     }
   };
 
-  const handleAdminSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await axios.post(`${API}/api/admins`, adminData, {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-      });
-      setAdminData({ fullName: '', username: '', password: '' });
-      fetchAdmins();
-      setMessage({ type: 'success', text: 'Administrador cadastrado com sucesso!' });
-    } catch (err) {
-      console.error('Erro ao cadastrar admin:', err);
-      setMessage({ type: 'danger', text: 'Erro ao cadastrar administrador' });
-    }
-  };
-
   const handleEditNews = (news) => {
     setEditingNews(news);
     setNewsData({
@@ -202,7 +169,7 @@ const AdminPanel = () => {
     setMediaData({
       title: media.title || '',
       artist: media.artist || '',
-      category: 'music'
+      category: 'music' // Forçando apenas músicas
     });
   };
 
@@ -217,19 +184,19 @@ const AdminPanel = () => {
       const headers = {
         'Authorization': `Bearer ${localStorage.getItem('token')}`
       };
-
+  
       if (itemToDelete.type === 'news') {
-        await axios.delete(`${API}/api/news/${itemToDelete.data._id}`, { headers });
+        await axios.delete(`/api/news/${itemToDelete.data._id}`, { headers });
         setMessage({ type: 'success', text: 'Notícia removida com sucesso!' });
         fetchNewsList();
       } else if (itemToDelete.type === 'media') {
-        await axios.delete(`${API}/api/media/${itemToDelete.data._id}`, { headers });
+        await axios.delete(`/api/media/${itemToDelete.data._id}`, { headers });
         setMessage({ type: 'success', text: 'Música removida com sucesso!' });
         fetchMediaList();
       } else if (itemToDelete.type === 'admin') {
-        await axios.delete(`${API}/api/admins/${itemToDelete.data._id}`, { headers });
+        await axios.delete(`/api/admins/${itemToDelete.data._id}`, { headers });
         setMessage({ type: 'success', text: 'Administrador removido com sucesso!' });
-        fetchAdmins();
+        fetchAdmins(); // ⚠️ Certifique-se que esta função existe e está implementada!
       }
     } catch (err) {
       console.error('Erro ao remover item:', err);
@@ -243,6 +210,7 @@ const AdminPanel = () => {
       setItemToDelete({ type: '', data: null });
     }
   };
+  
 
   const resetNewsForm = () => {
     setNewsData({ title: '', content: '', category: 'geral', videoUrl: '' });
@@ -256,6 +224,39 @@ const AdminPanel = () => {
     setMediaThumbnail(null);
     setEditingMedia(null);
   };
+
+const [admins, setAdmins] = useState([]);
+const [adminData, setAdminData] = useState({ fullName: '', username: '', password: '' });
+
+const fetchAdmins = async () => {
+  try {
+    const res = await axios.get('/api/admins', {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+    });
+    setAdmins(Array.isArray(res.data) ? res.data : []);
+  } catch (err) {
+    console.error('Erro ao buscar admins:', err);
+  }
+};
+
+useEffect(() => {
+  if (activeTab === 'admins') fetchAdmins();
+}, [activeTab]);
+
+const handleAdminSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    await axios.post('/api/admins', adminData, {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+    });
+    setAdminData({ fullName: '', username: '', password: '' });
+    fetchAdmins();
+    setMessage({ type: 'success', text: 'Administrador cadastrado com sucesso!' });
+  } catch (err) {
+    console.error('Erro ao cadastrar admin:', err);
+    setMessage({ type: 'danger', text: 'Erro ao cadastrar administrador' });
+  }
+};
 
   return (
     <Container className="my-5">
