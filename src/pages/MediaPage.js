@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Container, Row, Col, Card, Button, ButtonGroup, Form } from 'react-bootstrap';
+import { Container, Row, Col, Card, Button, Form, Spinner, Alert } from 'react-bootstrap';
 import axios from 'axios';
 import { FaPlay, FaPause, FaDownload } from 'react-icons/fa';
 import './MediaPage.css';
@@ -9,22 +9,28 @@ const MediaPage = () => {
   const [filter, setFilter] = useState('todos');
   const [search, setSearch] = useState('');
   const [currentMedia, setCurrentMedia] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
   const audioRef = useRef(null);
 
   useEffect(() => {
     const fetchMedia = async () => {
       try {
+        setIsLoading(true);
+        setError(null);
+
         const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/media`);
         setMediaList(Array.isArray(res.data) ? res.data : []);
       } catch (err) {
         console.error('Erro ao carregar mídias:', err);
+        setError('Erro ao carregar músicas. Tente novamente mais tarde.');
+      } finally {
+        setIsLoading(false);
       }
     };
-    fetchMedia();
 
-    return () => {
-      stopAudio();
-    };
+    fetchMedia();
+    return () => stopAudio();
   }, []);
 
   const stopAudio = () => {
@@ -57,31 +63,56 @@ const MediaPage = () => {
     return matchesFilter && matchesSearch;
   });
 
+  if (isLoading) {
+    return (
+      <Container className="py-5 text-center">
+        <Spinner animation="border" role="status">
+          <span className="visually-hidden">Carregando músicas...</span>
+        </Spinner>
+        <p className="mt-2">Carregando músicas...</p>
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container className="py-5">
+        <Alert variant="danger">
+          <Alert.Heading>Erro ao carregar músicas</Alert.Heading>
+          <p>{error}</p>
+          <Button variant="primary" onClick={() => window.location.reload()}>
+            Tentar novamente
+          </Button>
+        </Alert>
+      </Container>
+    );
+  }
+
   return (
     <Container className="media-container py-4">
       <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap">
         <h1 className="page-title">Músicas</h1>
-        <div className="d-flex align-items-center gap-2 flex-wrap">
-          <Form.Control
-            type="text"
-            placeholder="Buscar por título ou artista..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="me-2"
-          />
-        </div>
+        <Form.Control
+          type="text"
+          placeholder="Buscar por título ou artista..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          style={{ maxWidth: '300px' }}
+        />
       </div>
 
-      <Row>
-        {filteredMedia.length > 0 ? (
-          filteredMedia.map((media) => (
+      {filteredMedia.length === 0 ? (
+        <Alert variant="info">Nenhuma música encontrada.</Alert>
+      ) : (
+        <Row>
+          {filteredMedia.map((media) => (
             <Col key={media._id} md={6} lg={4} className="mb-4">
-              <Card className="media-card h-100">
+              <Card className="media-card h-100 shadow-sm">
                 <div className="media-content">
                   {media.thumbnailUrl && (
                     <div className="media-thumbnail">
                       <img
-                       src={`${process.env.REACT_APP_API_URL}${media.thumbnailUrl}`}
+                        src={`${process.env.REACT_APP_API_URL}${media.thumbnailUrl}`}
                         alt={`Capa de ${media.title}`}
                         className="thumbnail-image"
                       />
@@ -97,18 +128,23 @@ const MediaPage = () => {
                       </button>
                     </div>
                   )}
-
                   <Card.Body className="d-flex flex-column">
                     <Card.Title className="media-title">{media.title}</Card.Title>
-                    <Card.Text className="media-artist">{media.artist || 'Artista Desconhecido'}</Card.Text>
+                    <Card.Text className="media-artist">
+                      {media.artist || 'Artista Desconhecido'}
+                    </Card.Text>
 
                     <div className="media-controls mt-auto">
-                      <span className="media-date">{new Date(media.createdAt).toLocaleDateString('pt-BR')}</span>
+                      <span className="media-date">
+                        {new Date(media.createdAt).toLocaleDateString('pt-BR')}
+                      </span>
                       <Button
                         variant="outline-dark"
                         size="sm"
                         className="download-button"
-                        onClick={() => window.open(`${process.env.REACT_APP_API_URL}/api/media/download/${media._id}`, '_blank')}
+                        onClick={() =>
+                          window.open(`${process.env.REACT_APP_API_URL}/api/media/download/${media._id}`, '_blank')
+                        }
                       >
                         <FaDownload className="me-1" />
                         Baixar
@@ -118,11 +154,9 @@ const MediaPage = () => {
                 </div>
               </Card>
             </Col>
-          ))
-        ) : (
-          <p className="text-muted">Nenhuma música encontrada.</p>
-        )}
-      </Row>
+          ))}
+        </Row>
+      )}
     </Container>
   );
 };
