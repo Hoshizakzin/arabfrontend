@@ -57,10 +57,9 @@ const MediaPage = () => {
   };
 
   const filteredMedia = mediaList.filter(media => {
-    const matchesFilter = filter === 'todos' || media.category === filter;
     const matchesSearch = media.title?.toLowerCase().includes(search.toLowerCase()) ||
                           media.artist?.toLowerCase().includes(search.toLowerCase());
-    return matchesFilter && matchesSearch;
+    return matchesSearch;
   });
 
   if (isLoading) {
