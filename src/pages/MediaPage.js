@@ -6,7 +6,8 @@ import './MediaPage.css';
 
 const MediaPage = () => {
   const [mediaList, setMediaList] = useState([]);
-  const [filter, setFilter] = useState('todos');
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [search, setSearch] = useState('');
   const [currentMedia, setCurrentMedia] = useState(null);
   const audioRef = useRef(null);
@@ -14,10 +15,15 @@ const MediaPage = () => {
   useEffect(() => {
     const fetchMedia = async () => {
       try {
+        setIsLoading(true);
+        setError(null);
         const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/media`);
         setMediaList(Array.isArray(res.data) ? res.data : []);
-      } catch (err) {
-        console.error('Erro ao carregar mídias:', err);
+      } catch (error) {
+        console.error('Erro ao carregar músicas:', error);
+        setError(error.response?.data?.message || error.message || 'Erro ao carregar músicas');
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchMedia();
@@ -51,11 +57,50 @@ const MediaPage = () => {
   };
 
   const filteredMedia = mediaList.filter(media => {
-    const matchesFilter = filter === 'todos' || media.category === filter;
     const matchesSearch = media.title?.toLowerCase().includes(search.toLowerCase()) ||
                           media.artist?.toLowerCase().includes(search.toLowerCase());
     return matchesFilter && matchesSearch;
   });
+
+  if (isLoading) {
+    return (
+      <Container className="my-5 text-center">
+        <Spinner animation="border" role="status">
+          <span className="visually-hidden">Carregando músicas...</span>
+        </Spinner>
+        <p className="mt-2">Carregando músicas...</p>
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container className="my-5">
+        <Alert variant="danger">
+          <Alert.Heading>Erro ao carregar músicas</Alert.Heading>
+          <p>{error}</p>
+          <Button variant="primary" onClick={() => window.location.reload()}>
+            Tentar novamente
+          </Button>
+        </Alert>
+      </Container>
+    );
+  }
+
+  if (filteredMedia.length === 0) {
+    return (
+      <Container className="my-5">
+        <Form.Control
+          type="text"
+          placeholder="Buscar notícias por título ou conteúdo..."
+          className="mb-4"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <Alert variant="info">Nenhuma música encontrada.</Alert>
+      </Container>
+    );
+  }
 
   return (
     <Container className="media-container py-4">

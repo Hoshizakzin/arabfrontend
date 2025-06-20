@@ -29,25 +29,34 @@ const NewsDetailPage = () => {
     <Container className="my-5">
       <Card className="shadow">
         {article.imageUrl && (
-          <Card.Img 
-            variant="top" 
+          <Card.Img
+            variant="top"
             src={`${process.env.REACT_APP_API_URL}${article.imageUrl}`}
-            style={{ maxHeight: '500px', objectFit: 'cover' }} 
+            style={{
+              width: '100%',
+              maxHeight: '480px',
+              objectFit: 'cover',
+              borderTopLeftRadius: '0.5rem',
+              borderTopRightRadius: '0.5rem'
+            }}
           />
         )}
         <Card.Body>
-          <Card.Title className="display-4">{article.title}</Card.Title>
-          <Card.Text className="lead mt-4">{article.content}</Card.Text>
+          <Card.Title className="h2 fw-bold mb-4">{article.title}</Card.Title>
+          <Card.Text className="text-justify" style={{ lineHeight: '1.7em', fontSize: '1.1rem' }}>
+            {article.content}
+          </Card.Text>
+
 
           {article.videoUrl && (
             <Button
-              variant="danger"
-              href={article.videoUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-3"
+            variant="outline-danger"
+            href={article.videoUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-4"
             >
-              Assistir no YouTube
+              🎬 Assistir no YouTube
             </Button>
           )}
 
