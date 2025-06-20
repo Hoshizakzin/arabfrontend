@@ -59,7 +59,7 @@ const AdminPanel = () => {
       console.error('Erro ao carregar notícias:', err);
       setMessage({
         type: 'danger',
-        text: 'Erro ao carregar lista de notícias'
+        text: 'Erro ao carregar lista de notícias!!'
       });
       setNewsList([]);
     }
@@ -85,8 +85,7 @@ const AdminPanel = () => {
 
       await axios[method](url, formData, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'multipart/form-data'
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       });
 
@@ -131,8 +130,7 @@ const AdminPanel = () => {
 
       await axios[method](url, formData, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'multipart/form-data'
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       });
 
@@ -248,9 +246,7 @@ const AdminPanel = () => {
   const handleAdminSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`${process.env.REACT_APP_API_URL}/api/admins`, adminData, {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-      });
+      await axios.post('/api/admins', formData);
       setAdminData({ fullName: '', username: '', password: '' });
       fetchAdmins();
       setMessage({ type: 'success', text: 'Administrador cadastrado com sucesso!' });
