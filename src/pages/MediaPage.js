@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Container, Row, Col, Card, Button, ButtonGroup, Form } from 'react-bootstrap';
+import { Container, Row, Col, Card, Button, Spinner, Alert, Form } from 'react-bootstrap';
 import axios from 'axios';
 import { FaPlay, FaPause, FaDownload } from 'react-icons/fa';
 import './MediaPage.css';
@@ -57,6 +57,7 @@ const MediaPage = () => {
   };
 
   const filteredMedia = mediaList.filter(media => {
+    const matchesFilter = filter === 'todos' || media.category === filter;
     const matchesSearch = media.title?.toLowerCase().includes(search.toLowerCase()) ||
                           media.artist?.toLowerCase().includes(search.toLowerCase());
     return matchesFilter && matchesSearch;
@@ -92,7 +93,7 @@ const MediaPage = () => {
       <Container className="my-5">
         <Form.Control
           type="text"
-          placeholder="Buscar notícias por título ou conteúdo..."
+          placeholder="Buscar músicas por título ou conteúdo..."
           className="mb-4"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
