@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Container, Card, Button } from 'react-bootstrap';
 import axios from 'axios';
+import './NewsDetailPage.css'
 
 const NewsDetailPage = () => {
   const { id } = useParams();
@@ -43,9 +44,10 @@ const NewsDetailPage = () => {
         )}
         <Card.Body>
           <Card.Title className="h2 fw-bold mb-4">{article.title}</Card.Title>
-          <Card.Text className="text-justify" style={{ lineHeight: '1.7em', fontSize: '1.1rem' }}>
+          <Card.Text className="news-content text-justify" style={{ lineHeight: '1.7em', fontSize: '1.1rem' }}>
             {article.content}
           </Card.Text>
+
 
 
           {article.videoUrl && (
