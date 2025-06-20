@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Tab, Tabs, Container, Form, Button, Alert, Spinner, Modal, Table } from 'react-bootstrap';
-import axios from 'axios';
+import api from '../api'
 import { FaEdit, FaTrash } from 'react-icons/fa';
 
 const AdminPanel = () => {
@@ -38,7 +38,7 @@ const AdminPanel = () => {
 
   const fetchMediaList = async () => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/media`);
+      const res = await api.get('/api/media');
       setMediaList(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error('Erro ao carregar músicas:', err);
@@ -52,14 +52,14 @@ const AdminPanel = () => {
 
   const fetchNewsList = async () => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/news`);
+      const res = await api.get('/api/news');
       const data = res.data?.data || res.data;
       setNewsList(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error('Erro ao carregar notícias:', err);
       setMessage({
         type: 'danger',
-        text: 'Erro ao carregar lista de notícias!!'
+        text: 'Erro ao carregar lista de notícias'
       });
       setNewsList([]);
     }
@@ -83,9 +83,10 @@ const AdminPanel = () => {
         : `${process.env.REACT_APP_API_URL}/api/news`;
       const method = editingNews ? 'put' : 'post';
 
-      await axios[method](url, formData, {
+      await api[method](editingNews ? `/api/news/${editingNews._id}` : '/api/news', formData, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'multipart/form-data'
         }
       });
 
@@ -128,9 +129,10 @@ const AdminPanel = () => {
         : `${process.env.REACT_APP_API_URL}/api/media`;
       const method = editingMedia ? 'put' : 'post';
 
-      await axios[method](url, formData, {
+      await api[method](editingMedia ? `/api/media/${editingMedia._id}` : '/api/media', formData, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'multipart/form-data'
         }
       });
 
@@ -187,15 +189,15 @@ const AdminPanel = () => {
       };
 
       if (itemToDelete.type === 'news') {
-        await axios.delete(`${process.env.REACT_APP_API_URL}/api/news/${itemToDelete.data._id}`, { headers });
+        await api.delete(`/api/news/${itemToDelete.data._id}`, { headers });
         setMessage({ type: 'success', text: 'Notícia removida com sucesso!' });
         fetchNewsList();
       } else if (itemToDelete.type === 'media') {
-        await axios.delete(`${process.env.REACT_APP_API_URL}/api/media/${itemToDelete.data._id}`, { headers });
+        await api.delete(`/api/media/${itemToDelete.data._id}`, { headers });
         setMessage({ type: 'success', text: 'Música removida com sucesso!' });
         fetchMediaList();
       } else if (itemToDelete.type === 'admin') {
-        await axios.delete(`${process.env.REACT_APP_API_URL}/api/admins/${itemToDelete.data._id}`, { headers });
+        await api.delete(`/api/admins/${itemToDelete.data._id}`, { headers });
         setMessage({ type: 'success', text: 'Administrador removido com sucesso!' });
         fetchAdmins();
       }
@@ -230,7 +232,7 @@ const AdminPanel = () => {
 
   const fetchAdmins = async () => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/admins`, {
+      const res = await api.get('/api/admins', {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
       setAdmins(Array.isArray(res.data) ? res.data : []);
@@ -246,7 +248,9 @@ const AdminPanel = () => {
   const handleAdminSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('/api/admins', formData);
+      await api.post('/api/admins', adminData, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      });
       setAdminData({ fullName: '', username: '', password: '' });
       fetchAdmins();
       setMessage({ type: 'success', text: 'Administrador cadastrado com sucesso!' });
