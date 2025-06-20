@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Container, Row, Col, Card, Button, Spinner, Alert, Form } from 'react-bootstrap';
+import { Container, Row, Col, Card, Button, ButtonGroup, Form } from 'react-bootstrap';
 import axios from 'axios';
 import { FaPlay, FaPause, FaDownload } from 'react-icons/fa';
 import './MediaPage.css';
 
 const MediaPage = () => {
   const [mediaList, setMediaList] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [filter, setFilter] = useState('todos');
   const [search, setSearch] = useState('');
   const [currentMedia, setCurrentMedia] = useState(null);
   const audioRef = useRef(null);
@@ -15,15 +14,10 @@ const MediaPage = () => {
   useEffect(() => {
     const fetchMedia = async () => {
       try {
-        setIsLoading(true);
-        setError(null);
         const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/media`);
         setMediaList(Array.isArray(res.data) ? res.data : []);
-      } catch (error) {
-        console.error('Erro ao carregar músicas:', error);
-        setError(error.response?.data?.message || error.message || 'Erro ao carregar músicas');
-      } finally {
-        setIsLoading(false);
+      } catch (err) {
+        console.error('Erro ao carregar mídias:', err);
       }
     };
     fetchMedia();
@@ -57,50 +51,11 @@ const MediaPage = () => {
   };
 
   const filteredMedia = mediaList.filter(media => {
+    const matchesFilter = filter === 'todos' || media.category === filter;
     const matchesSearch = media.title?.toLowerCase().includes(search.toLowerCase()) ||
                           media.artist?.toLowerCase().includes(search.toLowerCase());
-    return matchesSearch;
+    return matchesFilter && matchesSearch;
   });
-
-  if (isLoading) {
-    return (
-      <Container className="my-5 text-center">
-        <Spinner animation="border" role="status">
-          <span className="visually-hidden">Carregando músicas...</span>
-        </Spinner>
-        <p className="mt-2">Carregando músicas...</p>
-      </Container>
-    );
-  }
-
-  if (error) {
-    return (
-      <Container className="my-5">
-        <Alert variant="danger">
-          <Alert.Heading>Erro ao carregar músicas</Alert.Heading>
-          <p>{error}</p>
-          <Button variant="primary" onClick={() => window.location.reload()}>
-            Tentar novamente
-          </Button>
-        </Alert>
-      </Container>
-    );
-  }
-
-  if (filteredMedia.length === 0) {
-    return (
-      <Container className="my-5">
-        <Form.Control
-          type="text"
-          placeholder="Buscar músicas por título ou conteúdo..."
-          className="mb-4"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <Alert variant="info">Nenhuma música encontrada.</Alert>
-      </Container>
-    );
-  }
 
   return (
     <Container className="media-container py-4">
