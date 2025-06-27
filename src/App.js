@@ -44,6 +44,13 @@ function App() {
             <Nav className="me-auto">
               <Nav.Link as={Link} to="/news">Notícias</Nav.Link>
               <Nav.Link as={Link} to="/media">Mídia</Nav.Link>
+              <Nav>
+                {isAuthenticated ? (
+                  <Nav.Link onClick={handleLogout}>Sair</Nav.Link>
+                ) : (
+                  <Nav.Link as={Link} to="/login">Login</Nav.Link>
+                )}
+              </Nav>
               <Nav.Link as="a" href="https://www.facebook.com/profile.php?id=61576591880951" 
                 target="_blank" rel="noopener noreferrer"> <FaFacebook /> </Nav.Link>
               <Nav.Link as="a" href="https://youtube.com/@arabeoficial?si=da9ixNZnXbZTb9n9" 
@@ -51,13 +58,6 @@ function App() {
               <Nav.Link as="a" href="https://m.soundcloud.com/mmodelo-filho-da-luisa-280257679?utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing" 
                 target="_blank" rel="noopener noreferrer"> <FaSoundcloud /> </Nav.Link>
               {isAuthenticated && <Nav.Link as={Link} to="/admin">Admin</Nav.Link>}
-            </Nav>
-            <Nav>
-              {isAuthenticated ? (
-                <Nav.Link onClick={handleLogout}>Sair</Nav.Link>
-              ) : (
-                <Nav.Link as={Link} to="/login">Login</Nav.Link>
-              )}
             </Nav>
           </Navbar.Collapse>
         </Container>
