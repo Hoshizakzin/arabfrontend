@@ -44,7 +44,7 @@ const MediaPage = () => {
   const handlePlayMedia = (media) => {
     if (!media.url) return;
     stopAudio();
-    const newAudio = new Audio(media.url);
+    const newAudio = new Audio(`${process.env.REACT_APP_API_URL}${media.url}`);
     audioRef.current = newAudio;
     newAudio.play()
       .then(() => setCurrentMedia(media))
@@ -112,7 +112,7 @@ const MediaPage = () => {
                   {media.thumbnailUrl && (
                     <div className="media-thumbnail">
                       <img
-                        src={media.thumbnailUrl}
+                        src={`${process.env.REACT_APP_API_URL}${media.thumbnailUrl}`}
                         alt={`Capa de ${media.title}`}
                         className="thumbnail-image"
                       />

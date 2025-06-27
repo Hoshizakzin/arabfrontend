@@ -5,8 +5,17 @@ import { FaEdit, FaTrash } from 'react-icons/fa';
 
 const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState('news');
-  const [newsData, setNewsData] = useState({ title: '', content: '', category: 'geral', videoUrl: '' });
-  const [mediaData, setMediaData] = useState({ title: '', artist: '', category: 'music' });
+  const [newsData, setNewsData] = useState({
+    title: '',
+    content: '',
+    category: 'geral',
+    videoUrl: ''
+  });
+  const [mediaData, setMediaData] = useState({
+    title: '',
+    artist: '',
+    category: 'music'
+  });
   const [newsImage, setNewsImage] = useState(null);
   const [mediaFile, setMediaFile] = useState(null);
   const [mediaThumbnail, setMediaThumbnail] = useState(null);
@@ -19,13 +28,12 @@ const AdminPanel = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState({ type: '', data: null });
 
-  const [admins, setAdmins] = useState([]);
-  const [adminData, setAdminData] = useState({ fullName: '', username: '', password: '' });
-
   useEffect(() => {
-    if (activeTab === 'media') fetchMediaList();
-    else if (activeTab === 'news') fetchNewsList();
-    else if (activeTab === 'admins') fetchAdmins();
+    if (activeTab === 'media') {
+      fetchMediaList();
+    } else if (activeTab === 'news') {
+      fetchNewsList();
+    }
   }, [activeTab]);
 
   const fetchMediaList = async () => {
@@ -34,7 +42,10 @@ const AdminPanel = () => {
       setMediaList(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error('Erro ao carregar músicas:', err);
-      setMessage({ type: 'danger', text: 'Erro ao carregar lista de músicas' });
+      setMessage({
+        type: 'danger',
+        text: 'Erro ao carregar lista de músicas'
+      });
       setMediaList([]);
     }
   };
@@ -46,19 +57,11 @@ const AdminPanel = () => {
       setNewsList(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error('Erro ao carregar notícias:', err);
-      setMessage({ type: 'danger', text: 'Erro ao carregar lista de notícias' });
-      setNewsList([]);
-    }
-  };
-
-  const fetchAdmins = async () => {
-    try {
-      const res = await api.get('/api/admins', {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      setMessage({
+        type: 'danger',
+        text: 'Erro ao carregar lista de notícias'
       });
-      setAdmins(Array.isArray(res.data) ? res.data : []);
-    } catch (err) {
-      console.error('Erro ao buscar admins:', err);
+      setNewsList([]);
     }
   };
 
@@ -75,25 +78,33 @@ const AdminPanel = () => {
     if (newsImage) formData.append('image', newsImage);
 
     try {
+      const url = editingNews
+        ? `${process.env.REACT_APP_API_URL}/api/news/${editingNews._id}`
+        : `${process.env.REACT_APP_API_URL}/api/news`;
       const method = editingNews ? 'put' : 'post';
-      const url = editingNews ? `/api/news/${editingNews._id}` : '/api/news';
-      await api[method](url, formData, {
+
+      await api[method](editingNews ? `/api/news/${editingNews._id}` : '/api/news', formData, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'multipart/form-data'
         }
       });
 
       setMessage({
         type: 'success',
-        text: editingNews ? 'Notícia atualizada com sucesso!' : 'Notícia publicada com sucesso!'
+        text: editingNews
+          ? 'Notícia atualizada com sucesso!'
+          : 'Notícia publicada com sucesso!'
       });
 
       resetNewsForm();
       fetchNewsList();
     } catch (err) {
       console.error('Erro ao processar notícia:', err);
-      setMessage({ type: 'danger', text: err.response?.data?.message || 'Erro ao processar notícia' });
+      setMessage({
+        type: 'danger',
+        text: err.response?.data?.message || 'Erro ao processar notícia'
+      });
     } finally {
       setLoading(false);
     }
@@ -107,24 +118,29 @@ const AdminPanel = () => {
     const formData = new FormData();
     formData.append('title', mediaData.title);
     formData.append('artist', mediaData.artist);
-    formData.append('category', 'music');
+    formData.append('category', 'music'); // Forçar tipo música
     if (mediaFile) formData.append('file', mediaFile);
     if (mediaThumbnail) formData.append('thumbnail', mediaThumbnail);
     if (editingMedia) formData.append('_id', editingMedia._id);
 
     try {
+      const url = editingMedia
+        ? `${process.env.REACT_APP_API_URL}/api/media/${editingMedia._id}`
+        : `${process.env.REACT_APP_API_URL}/api/media`;
       const method = editingMedia ? 'put' : 'post';
-      const url = editingMedia ? `/api/media/${editingMedia._id}` : '/api/media';
-      await api[method](url, formData, {
+
+      await api[method](editingMedia ? `/api/media/${editingMedia._id}` : '/api/media', formData, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'multipart/form-data'
         }
       });
 
       setMessage({
         type: 'success',
-        text: editingMedia ? 'Música atualizada com sucesso!' : 'Música enviada com sucesso!'
+        text: editingMedia
+          ? 'Música atualizada com sucesso!'
+          : 'Música enviada com sucesso!'
       });
 
       resetMediaForm();
@@ -133,7 +149,8 @@ const AdminPanel = () => {
       console.error('Erro ao processar música:', err);
       setMessage({
         type: 'danger',
-        text: err.response?.data?.error || 'Erro ao processar música'
+        text: err.response?.data?.error ||
+          (editingMedia ? 'Erro ao atualizar música' : 'Erro ao enviar música')
       });
     } finally {
       setLoading(false);
@@ -167,7 +184,10 @@ const AdminPanel = () => {
   const confirmDelete = async () => {
     setLoading(true);
     try {
-      const headers = { Authorization: `Bearer ${localStorage.getItem('token')}` };
+      const headers = {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      };
+
       if (itemToDelete.type === 'news') {
         await api.delete(`/api/news/${itemToDelete.data._id}`, { headers });
         setMessage({ type: 'success', text: 'Notícia removida com sucesso!' });
@@ -183,7 +203,10 @@ const AdminPanel = () => {
       }
     } catch (err) {
       console.error('Erro ao remover item:', err);
-      setMessage({ type: 'danger', text: err.response?.data?.error || 'Erro ao remover item' });
+      setMessage({
+        type: 'danger',
+        text: err.response?.data?.error || 'Erro ao remover item'
+      });
     } finally {
       setLoading(false);
       setShowDeleteModal(false);
@@ -204,11 +227,29 @@ const AdminPanel = () => {
     setEditingMedia(null);
   };
 
+  const [admins, setAdmins] = useState([]);
+  const [adminData, setAdminData] = useState({ fullName: '', username: '', password: '' });
+
+  const fetchAdmins = async () => {
+    try {
+      const res = await api.get('/api/admins', {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      });
+      setAdmins(Array.isArray(res.data) ? res.data : []);
+    } catch (err) {
+      console.error('Erro ao buscar admins:', err);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === 'admins') fetchAdmins();
+  }, [activeTab]);
+
   const handleAdminSubmit = async (e) => {
     e.preventDefault();
     try {
       await api.post('/api/admins', adminData, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
       setAdminData({ fullName: '', username: '', password: '' });
       fetchAdmins();
