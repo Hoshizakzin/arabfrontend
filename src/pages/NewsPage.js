@@ -106,16 +106,16 @@ const NewsPage = () => {
         {filteredNews.map((article) => (
           <Col key={article._id} md={4} className="mb-4">
             <Card className="h-100 shadow-sm">
-            {article.imageUrl && (
-              <Card.Img
-                variant="top"
-                src={`${process.env.REACT_APP_API_URL}${article.imageUrl}`}
-                alt={article.title}
-                style={{ height: '200px', objectFit: 'cover' }}
-                onError={(e) => {
-                  e.target.style.display = 'none';
-                }}
-              />
+              {article.imageUrl && (
+                <Card.Img
+                  variant="top"
+                  src={article.imageUrl}
+                  alt={article.title}
+                  style={{ height: '200px', objectFit: 'cover' }}
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                  }}
+                />
               )}
               <Card.Body className="d-flex flex-column">
                 <Card.Title>{article.title}</Card.Title>
@@ -133,16 +133,16 @@ const NewsPage = () => {
                 </Button>
 
                 {article.videoUrl && (
-                <Button
-                  variant="outline-danger"
-                  className="mt-2"
-                  href={article.videoUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Assistir ao Vídeo
-                </Button>
-              )}
+                  <Button
+                    variant="outline-danger"
+                    className="mt-2"
+                    href={article.videoUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Assistir ao Vídeo
+                  </Button>
+                )}
               </Card.Body>
               <Card.Footer>
                 <small className="text-muted">

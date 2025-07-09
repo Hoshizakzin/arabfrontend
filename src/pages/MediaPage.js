@@ -18,11 +18,13 @@ const MediaPage = () => {
       try {
         setIsLoading(true);
         setError(null);
+        console.log('📡 Buscando mídias da API...');
 
         const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/media`);
+        console.log('🎶 Mídias recebidas:', res.data);
         setMediaList(Array.isArray(res.data) ? res.data : []);
       } catch (err) {
-        console.error('Erro ao carregar mídias:', err);
+        console.error('❌ Erro ao carregar mídias:', err);
         setError('Erro ao carregar músicas. Tente novamente mais tarde.');
       } finally {
         setIsLoading(false);
@@ -44,11 +46,19 @@ const MediaPage = () => {
   const handlePlayMedia = (media) => {
     if (!media.url) return;
     stopAudio();
-    const newAudio = new Audio(`${process.env.REACT_APP_API_URL}${media.url}`);
+
+    const newAudio = new Audio(media.url);
     audioRef.current = newAudio;
+
     newAudio.play()
-      .then(() => setCurrentMedia(media))
-      .catch(err => console.error('Erro ao reproduzir áudio:', err));
+      .then(() => {
+        setCurrentMedia(media);
+        console.log('▶️ Tocando:', media.title);
+      })
+      .catch(err => {
+        console.error('❌ Erro ao reproduzir áudio:', err);
+        setError('Erro ao reproduzir a música.');
+      });
   };
 
   const handlePause = () => {
@@ -112,7 +122,7 @@ const MediaPage = () => {
                   {media.thumbnailUrl && (
                     <div className="media-thumbnail">
                       <img
-                        src={`${process.env.REACT_APP_API_URL}${media.thumbnailUrl}`}
+                        src={media.thumbnailUrl}
                         alt={`Capa de ${media.title}`}
                         className="thumbnail-image"
                       />

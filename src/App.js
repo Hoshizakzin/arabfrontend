@@ -41,27 +41,36 @@ function App() {
           <Navbar.Brand as={Link} to="/">Árabes</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="me-auto">
+            {/* Itens à esquerda */}
+            <Nav className="">
               <Nav.Link as={Link} to="/news">Notícias</Nav.Link>
               <Nav.Link as={Link} to="/media">Mídia</Nav.Link>
               {isAuthenticated && <Nav.Link as={Link} to="/admin">Admin</Nav.Link>}
-              <Nav>
-                {isAuthenticated ? (
-                  <Nav.Link onClick={handleLogout}>Sair</Nav.Link>
-                ) : (
-                  <Nav.Link as={Link} to="/login">Login</Nav.Link>
-                )}
-              </Nav>
+              {isAuthenticated ? (
+                <Nav.Link onClick={handleLogout}>Sair</Nav.Link>
+              ) : (
+                <Nav.Link as={Link} to="/login">Login</Nav.Link>
+              )}
+            </Nav>
+
+            <Nav className="ms-auto">
               <Nav.Link as="a" href="https://www.facebook.com/profile.php?id=61576591880951" 
-                target="_blank" rel="noopener noreferrer"> <FaFacebook /> </Nav.Link>
+                target="_blank" rel="noopener noreferrer">
+                <FaFacebook />
+              </Nav.Link>
               <Nav.Link as="a" href="https://youtube.com/@arabeoficial?si=da9ixNZnXbZTb9n9" 
-                target="_blank" rel="noopener noreferrer"> <FaYoutube /> </Nav.Link>
+                target="_blank" rel="noopener noreferrer">
+                <FaYoutube />
+              </Nav.Link>
               <Nav.Link as="a" href="https://m.soundcloud.com/mmodelo-filho-da-luisa-280257679?utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing" 
-                target="_blank" rel="noopener noreferrer"> <FaSoundcloud /> </Nav.Link>
+                target="_blank" rel="noopener noreferrer">
+                <FaSoundcloud />
+              </Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Container>
       </Navbar>
+
 
       <Container className="mt-4">
         <Routes>

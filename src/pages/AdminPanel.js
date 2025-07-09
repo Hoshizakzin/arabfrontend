@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Tab, Tabs, Container, Form, Button, Alert, Spinner, Modal, Table } from 'react-bootstrap';
-import api from '../api'
+import api from '../api';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 
 const AdminPanel = () => {
@@ -118,10 +118,9 @@ const AdminPanel = () => {
     const formData = new FormData();
     formData.append('title', mediaData.title);
     formData.append('artist', mediaData.artist);
-    formData.append('category', 'music'); // Forçar tipo música
+    formData.append('category', 'music');
     if (mediaFile) formData.append('file', mediaFile);
     if (mediaThumbnail) formData.append('thumbnail', mediaThumbnail);
-    if (editingMedia) formData.append('_id', editingMedia._id);
 
     try {
       const url = editingMedia
@@ -260,369 +259,365 @@ const AdminPanel = () => {
     }
   };
 
-  return (
-    <Container className="my-5">
-      <h2 className="mb-4">Painel Administrativo</h2>
+return (
+  <Container className="my-5">
+    <h2 className="mb-4">Painel Administrativo</h2>
 
-      {message.text && (
-        <Alert variant={message.type} onClose={() => setMessage({ type: '', text: '' })} dismissible>
-          {message.text}
-        </Alert>
-      )}
+    {message.text && (
+      <Alert variant={message.type} onClose={() => setMessage({ type: '', text: '' })} dismissible>
+        {message.text}
+      </Alert>
+    )}
 
-      <Tabs activeKey={activeTab} onSelect={(k) => setActiveTab(k)}>
-        <Tab eventKey="news" title="Gerenciar Notícias">
-          <div className="mt-4">
-            <h4>{editingNews ? 'Editar Notícia' : 'Adicionar Nova Notícia'}</h4>
-            <Form onSubmit={handleNewsSubmit}>
-              <Form.Group className="mb-3">
-                <Form.Label>Título *</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={newsData.title}
-                  onChange={(e) => setNewsData({ ...newsData, title: e.target.value })}
-                  required
-                />
-              </Form.Group>
+    <Tabs activeKey={activeTab} onSelect={(k) => setActiveTab(k)}>
+      {/* TAB NOTÍCIAS */}
+      <Tab eventKey="news" title="Gerenciar Notícias">
+        <div className="mt-4">
+          <h4>{editingNews ? 'Editar Notícia' : 'Adicionar Nova Notícia'}</h4>
+          <Form onSubmit={handleNewsSubmit}>
+            <Form.Group className="mb-3">
+              <Form.Label>Título *</Form.Label>
+              <Form.Control
+                type="text"
+                value={newsData.title}
+                onChange={(e) => setNewsData({ ...newsData, title: e.target.value })}
+                required
+              />
+            </Form.Group>
 
-              <Form.Group className="mb-3">
-                <Form.Label>Conteúdo *</Form.Label>
-                <Form.Control
-                  as="textarea"
-                  rows={5}
-                  value={newsData.content}
-                  onChange={(e) => setNewsData({ ...newsData, content: e.target.value })}
-                  required
-                />
-              </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Conteúdo *</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={5}
+                value={newsData.content}
+                onChange={(e) => setNewsData({ ...newsData, content: e.target.value })}
+                required
+              />
+            </Form.Group>
 
-              <Form.Group className="mb-3">
-                <Form.Label>Categoria</Form.Label>
-                <Form.Select
-                  value={newsData.category}
-                  onChange={(e) => setNewsData({ ...newsData, category: e.target.value })}
-                >
-                  <option value="geral">Geral</option>
-                  <option value="musica">Música</option>
-                  <option value="cinema">Cinema</option>
-                </Form.Select>
-              </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Categoria</Form.Label>
+              <Form.Select
+                value={newsData.category}
+                onChange={(e) => setNewsData({ ...newsData, category: e.target.value })}
+              >
+                <option value="geral">Geral</option>
+                <option value="musica">Música</option>
+                <option value="cinema">Cinema</option>
+              </Form.Select>
+            </Form.Group>
 
-              <Form.Group className="mb-3">
-                <Form.Label>URL do Vídeo (YouTube)</Form.Label>
-                <Form.Control
-                  type="url"
-                  placeholder="https://youtube.com/..."
-                  value={newsData.videoUrl}
-                  onChange={(e) => setNewsData({ ...newsData, videoUrl: e.target.value })}
-                />
-                <Form.Text className="text-muted">
-                  Insira o link do vídeo relacionado à notícia (opcional).
-                </Form.Text>
-              </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>URL do Vídeo (YouTube)</Form.Label>
+              <Form.Control
+                type="url"
+                placeholder="https://youtube.com/..."
+                value={newsData.videoUrl}
+                onChange={(e) => setNewsData({ ...newsData, videoUrl: e.target.value })}
+              />
+              <Form.Text className="text-muted">
+                Insira o link do vídeo relacionado à notícia (opcional).
+              </Form.Text>
+            </Form.Group>
 
-              <Form.Group className="mb-3">
-                <Form.Label>Imagem de Capa {!editingNews && '(opcional)'}</Form.Label>
-                <Form.Control
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => setNewsImage(e.target.files[0])}
-                />
-                {editingNews && (
-                  <Form.Text muted>
-                    Deixe em branco para manter a imagem atual
-                  </Form.Text>
+            <Form.Group className="mb-3">
+              <Form.Label>Imagem de Capa {!editingNews && '(opcional)'}</Form.Label>
+              <Form.Control
+                type="file"
+                accept="image/*"
+                onChange={(e) => setNewsImage(e.target.files[0])}
+              />
+              {editingNews && (
+                <Form.Text muted>Deixe em branco para manter a imagem atual</Form.Text>
+              )}
+            </Form.Group>
+
+            <div className="d-flex gap-2 mb-4">
+              <Button variant="primary" type="submit" disabled={loading}>
+                {loading ? (
+                  <>
+                    <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
+                    <span className="ms-2">{editingNews ? 'Atualizando...' : 'Publicando...'}</span>
+                  </>
+                ) : (
+                  editingNews ? 'Atualizar Notícia' : 'Publicar Notícia'
                 )}
-              </Form.Group>
+              </Button>
 
-              <div className="d-flex gap-2 mb-4">
-                <Button variant="primary" type="submit" disabled={loading}>
-                  {loading ? (
-                    <>
-                      <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
-                      <span className="ms-2">
-                        {editingNews ? 'Atualizando...' : 'Publicando...'}
-                      </span>
-                    </>
-                  ) : (
-                    editingNews ? 'Atualizar Notícia' : 'Publicar Notícia'
-                  )}
+              {editingNews && (
+                <Button variant="outline-secondary" onClick={resetNewsForm}>
+                  Cancelar
                 </Button>
+              )}
+            </div>
+          </Form>
 
-                {editingNews && (
-                  <Button variant="outline-secondary" onClick={resetNewsForm}>
-                    Cancelar
-                  </Button>
-                )}
-              </div>
-            </Form>
-
-            <h4>Lista de Notícias</h4>
-            <div className="table-responsive">
-              <Table striped bordered hover>
-                <thead>
-                  <tr>
-                    <th>Título</th>
-                    <th>Categoria</th>
-                    <th>Data</th>
-                    <th>Vídeo</th>
-                    <th>Ações</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {Array.isArray(newsList) && newsList.length > 0 ? (
-                    newsList.map((newsItem) => (
-                      <tr key={newsItem._id || Math.random().toString(36).substr(2, 9)}>
-                        <td>{newsItem.title || 'Sem título'}</td>
-                        <td>{newsItem.category || 'Geral'}</td>
-                        <td>
-                          {newsItem.createdAt ?
-                            new Date(newsItem.createdAt).toLocaleDateString() :
-                            'N/A'}
-                        </td>
-                        <td>
-                          {newsItem.videoUrl ? (
-                            <Button
-                              variant="outline-danger"
-                              size="sm"
-                              href={newsItem.videoUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              Assistir no YouTube
-                            </Button>
-                          ) : (
-                            '-'
-                          )}
-                        </td>
-                        <td>
-                          <Button
-                            variant="outline-primary"
-                            size="sm"
-                            onClick={() => handleEditNews(newsItem)}
-                            className="me-2"
-                          >
-                            <FaEdit />
-                          </Button>
+          <h4>Lista de Notícias</h4>
+          <div className="table-responsive">
+            <Table striped bordered hover>
+              <thead>
+                <tr>
+                  <th>Título</th>
+                  <th>Categoria</th>
+                  <th>Data</th>
+                  <th>Vídeo</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Array.isArray(newsList) && newsList.length > 0 ? (
+                  newsList.map((newsItem) => (
+                    <tr key={newsItem._id || Math.random().toString(36).substr(2, 9)}>
+                      <td>{newsItem.title || 'Sem título'}</td>
+                      <td>{newsItem.category || 'Geral'}</td>
+                      <td>{newsItem.createdAt ? new Date(newsItem.createdAt).toLocaleDateString() : 'N/A'}</td>
+                      <td>
+                        {newsItem.videoUrl ? (
                           <Button
                             variant="outline-danger"
                             size="sm"
-                            onClick={() => handleDeleteClick(newsItem, 'news')}
+                            href={newsItem.videoUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
                           >
-                            <FaTrash />
+                            Assistir no YouTube
                           </Button>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="5" className="text-center">
-                        Nenhuma notícia encontrada
+                        ) : (
+                          '-'
+                        )}
+                      </td>
+                      <td>
+                        <Button
+                          variant="outline-primary"
+                          size="sm"
+                          onClick={() => handleEditNews(newsItem)}
+                          className="me-2"
+                        >
+                          <FaEdit />
+                        </Button>
+                        <Button
+                          variant="outline-danger"
+                          size="sm"
+                          onClick={() => handleDeleteClick(newsItem, 'news')}
+                        >
+                          <FaTrash />
+                        </Button>
                       </td>
                     </tr>
-                  )}
-                </tbody>
-              </Table>
-            </div>
-          </div>
-        </Tab>
-
-        {/* Tab media permanece igual */}
-        <Tab eventKey="media" title="Gerenciar Músicas">
-          <div className="mt-4">
-            <h4>{editingMedia ? 'Editar Música' : 'Adicionar Nova Música'}</h4>
-            <Form onSubmit={handleMediaSubmit}>
-              <Form.Group className="mb-3">
-                <Form.Label>Título *</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={mediaData.title}
-                  onChange={(e) => setMediaData({ ...mediaData, title: e.target.value })}
-                  required
-                />
-              </Form.Group>
-
-              <Form.Group className="mb-3">
-                <Form.Label>Artista *</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={mediaData.artist}
-                  onChange={(e) => setMediaData({ ...mediaData, artist: e.target.value })}
-                  required
-                />
-              </Form.Group>
-
-              <Form.Group className="mb-3">
-                <Form.Label>Arquivo de Música *</Form.Label>
-                <Form.Control
-                  type="file"
-                  accept="audio/*"
-                  onChange={(e) => setMediaFile(e.target.files[0])}
-                  required={!editingMedia}
-                />
-              </Form.Group>
-
-              <Form.Group className="mb-3">
-                <Form.Label>Imagem de Capa (Thumbnail)</Form.Label>
-                <Form.Control
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => setMediaThumbnail(e.target.files[0])}
-                />
-              </Form.Group>
-
-              <div className="d-flex gap-2 mb-4">
-                <Button variant="primary" type="submit" disabled={loading}>
-                  {loading ? (
-                    <>
-                      <Spinner
-                        as="span"
-                        animation="border"
-                        size="sm"
-                        role="status"
-                        aria-hidden="true"
-                      />
-                      <span className="ms-2">{editingMedia ? 'Atualizando...' : 'Enviando...'}</span>
-                    </>
-                  ) : (
-                    editingMedia ? 'Atualizar Música' : 'Enviar Música'
-                  )}
-                </Button>
-
-                {editingMedia && (
-                  <Button variant="outline-secondary" onClick={resetMediaForm}>
-                    Cancelar
-                  </Button>
-                )}
-              </div>
-            </Form>
-
-            <h4>Lista de Músicas</h4>
-            <div className="table-responsive">
-              <Table striped bordered hover>
-                <thead>
+                  ))
+                ) : (
                   <tr>
-                    <th>Título</th>
-                    <th>Artista</th>
-                    <th>Data</th>
-                    <th>Downloads</th>
-                    <th>Ações</th>
+                    <td colSpan="5" className="text-center">
+                      Nenhuma notícia encontrada
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {Array.isArray(mediaList) && mediaList.length > 0 ? (
-                    mediaList.map((media) => (
-                      <tr key={media._id}>
-                        <td>{media.title || 'Sem título'}</td>
-                        <td>{media.artist || '-'}</td>
-                        <td>
-                          {media.createdAt ?
-                            new Date(media.createdAt).toLocaleDateString() :
-                            'N/A'}
-                        </td>
-                        <td>{media.downloads || 0}</td>
-                        <td>
-                          <Button
-                            variant="outline-primary"
-                            size="sm"
-                            onClick={() => handleEditMedia(media)}
-                            className="me-2"
-                          >
-                            <FaEdit />
-                          </Button>
-                          <Button
-                            variant="outline-danger"
-                            size="sm"
-                            onClick={() => handleDeleteClick(media, 'media')}
-                          >
-                            <FaTrash />
-                          </Button>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="5" className="text-center">
-                        Nenhuma música encontrada
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </Table>
-            </div>
+                )}
+              </tbody>
+            </Table>
           </div>
-        </Tab>
-        <Tab eventKey="admins" title="Gerenciar Admins">
-  <div className="mt-4">
-    <h4>Cadastro de Novo Administrador</h4>
-    <Form onSubmit={handleAdminSubmit}>
-      <Form.Group className="mb-3">
-        <Form.Label>Nome Completo *</Form.Label>
-        <Form.Control
-          type="text"
-          required
-          value={adminData.fullName}
-          onChange={(e) => setAdminData({ ...adminData, fullName: e.target.value })}
-        />
-      </Form.Group>
-      <Form.Group className="mb-3">
-        <Form.Label>Nome de Usuário *</Form.Label>
-        <Form.Control
-          type="text"
-          required
-          value={adminData.username}
-          onChange={(e) => setAdminData({ ...adminData, username: e.target.value })}
-        />
-      </Form.Group>
-      <Form.Group className="mb-3">
-        <Form.Label>Senha *</Form.Label>
-        <Form.Control
-          type="password"
-          required
-          value={adminData.password}
-          onChange={(e) => setAdminData({ ...adminData, password: e.target.value })}
-        />
-      </Form.Group>
-      <Button type="submit" variant="primary">Cadastrar</Button>
-    </Form>
+        </div>
+      </Tab>
 
-    <hr />
+      {/* TAB MÚSICAS */}
+      <Tab eventKey="media" title="Gerenciar Músicas">
+        <div className="mt-4">
+          <h4>{editingMedia ? 'Editar Música' : 'Adicionar Nova Música'}</h4>
+          <Form onSubmit={handleMediaSubmit}>
+            <Form.Group className="mb-3">
+              <Form.Label>Título *</Form.Label>
+              <Form.Control
+                type="text"
+                value={mediaData.title}
+                onChange={(e) => setMediaData({ ...mediaData, title: e.target.value })}
+                required
+              />
+            </Form.Group>
 
-    <h4>Lista de Administradores</h4>
-    <div className="table-responsive">
-      <Table striped bordered hover>
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>Usuário</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          {admins.length > 0 ? (
-            admins.map((admin) => (
-              <tr key={admin._id}>
-                <td>{admin.fullName}</td>
-                <td>{admin.username}</td>
-                <td>
-                <Button
-                  variant="outline-danger"
-                  size="sm"
-                  onClick={() => handleDeleteClick(admin, 'admin')}
-                >
-                  <FaTrash />
+            <Form.Group className="mb-3">
+              <Form.Label>Artista *</Form.Label>
+              <Form.Control
+                type="text"
+                value={mediaData.artist}
+                onChange={(e) => setMediaData({ ...mediaData, artist: e.target.value })}
+                required
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Arquivo de Música *</Form.Label>
+              <Form.Control
+                type="file"
+                accept="audio/*"
+                onChange={(e) => setMediaFile(e.target.files[0])}
+                required={!editingMedia}
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Imagem de Capa (Thumbnail)</Form.Label>
+              <Form.Control
+                type="file"
+                accept="image/*"
+                onChange={(e) => setMediaThumbnail(e.target.files[0])}
+              />
+            </Form.Group>
+
+            <div className="d-flex gap-2 mb-4">
+              <Button variant="primary" type="submit" disabled={loading}>
+                {loading ? (
+                  <>
+                    <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
+                    <span className="ms-2">{editingMedia ? 'Atualizando...' : 'Enviando...'}</span>
+                  </>
+                ) : (
+                  editingMedia ? 'Atualizar Música' : 'Enviar Música'
+                )}
+              </Button>
+
+              {editingMedia && (
+                <Button variant="outline-secondary" onClick={resetMediaForm}>
+                  Cancelar
                 </Button>
+              )}
+            </div>
+          </Form>
+
+      <h4>Lista de Músicas</h4>
+      <div className="table-responsive">
+        <Table striped bordered hover>
+          <thead>
+            <tr>
+              <th>Título</th>
+              <th>Artista</th>
+              <th>Data</th>
+              <th>Downloads</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {Array.isArray(mediaList) && mediaList.length > 0 ? (
+              mediaList.map((media) => (
+                <tr key={media._id}>
+                  <td>{media.title?.trim() || 'Sem título'}</td>
+                  <td>{media.artist?.trim() || <FaMinus />}</td>
+                  <td>
+                    {media.createdAt
+                      ? new Date(media.createdAt).toLocaleDateString('pt-PT', {
+                          day: '2-digit',
+                          month: 'short',
+                          year: 'numeric',
+                        })
+                      : 'N/A'}
+                  </td>
+                  <td>{typeof media.downloads === 'number' ? media.downloads : 0}</td>
+                  <td>
+                    <Button
+                      variant="outline-primary"
+                      size="sm"
+                      onClick={() => handleEditMedia(media)}
+                      className="me-2"
+                    >
+                      <FaEdit />
+                    </Button>
+                    <Button
+                      variant="outline-danger"
+                      size="sm"
+                      onClick={() => handleDeleteClick(media, 'media')}
+                    >
+                      <FaTrash />
+                    </Button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="5" className="text-center">
+                  Nenhuma música encontrada
                 </td>
               </tr>
-            ))
-          ) : (
-            <tr><td colSpan="3" className="text-center">Nenhum administrador encontrado</td></tr>
-          )}
-        </tbody>
-      </Table>
-    </div>
-  </div>
-</Tab>
+            )}
+          </tbody>
+        </Table>
+      </div>
+      </div>
+      </Tab>
+
+      <Tab eventKey="admins" title="Gerenciar Admins">
+        <div className="mt-4">
+          <h4>Cadastro de Novo Administrador</h4>
+          <Form onSubmit={handleAdminSubmit}>
+            <Form.Group className="mb-3">
+              <Form.Label>Nome Completo *</Form.Label>
+              <Form.Control
+                type="text"
+                required
+                value={adminData.fullName}
+                onChange={(e) => setAdminData({ ...adminData, fullName: e.target.value })}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Nome de Usuário *</Form.Label>
+              <Form.Control
+                type="text"
+                required
+                value={adminData.username}
+                onChange={(e) => setAdminData({ ...adminData, username: e.target.value })}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Senha *</Form.Label>
+              <Form.Control
+                type="password"
+                required
+                value={adminData.password}
+                onChange={(e) => setAdminData({ ...adminData, password: e.target.value })}
+              />
+            </Form.Group>
+            <Button type="submit" variant="primary">Cadastrar</Button>
+          </Form>
+
+          <hr />
+
+          <h4>Lista de Administradores</h4>
+          <div className="table-responsive">
+            <Table striped bordered hover>
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Usuário</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                {admins.length > 0 ? (
+                  admins.map((admin) => (
+                    <tr key={admin._id}>
+                      <td>{admin.fullName}</td>
+                      <td>{admin.username}</td>
+                      <td>
+                        <Button
+                          variant="outline-danger"
+                          size="sm"
+                          onClick={() => handleDeleteClick(admin, 'admin')}
+                        >
+                          <FaTrash />
+                        </Button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="3" className="text-center">
+                      Nenhum administrador encontrado
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </Table>
+          </div>
+        </div>
+      </Tab>
 
       </Tabs>
 
@@ -631,7 +626,13 @@ const AdminPanel = () => {
           <Modal.Title>Confirmar Exclusão</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-        Tem certeza que deseja excluir este {itemToDelete?.type === 'admin' ? 'administrador' : itemToDelete?.type === 'news' ? 'notícia' : 'item de mídia'}?
+          Tem certeza que deseja excluir este{' '}
+          {itemToDelete?.type === 'admin'
+            ? 'administrador'
+            : itemToDelete?.type === 'news'
+            ? 'notícia'
+            : 'item de mídia'}
+          ?
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
