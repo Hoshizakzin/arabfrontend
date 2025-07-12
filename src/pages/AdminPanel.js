@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Tab, Tabs, Container, Form, Button, Alert, Spinner, Modal, Table } from 'react-bootstrap';
 import api from '../api';
-import { FaEdit, FaTrash } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaMinus } from 'react-icons/fa';
 
 const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState('news');
