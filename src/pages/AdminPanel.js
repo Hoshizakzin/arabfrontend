@@ -77,27 +77,22 @@ const handleNewsSubmit = async (e) => {
   if (newsData.videoUrl) formData.append('videoUrl', newsData.videoUrl);
   if (newsImage) formData.append('image', newsImage);
 
-  const url = editingNews ? `/api/news/${editingNews._id}` : '/api/news';
-  const method = editingNews ? 'put' : 'post';
-
-  console.log('🔎 [handleNewsSubmit]');
-  console.log('🔗 Método:', method.toUpperCase());
-  console.log('📎 URL final:', `${api.defaults.baseURL}${url}`);
-  console.log('🔐 Token:', localStorage.getItem('token'));
-  console.log('📦 FormData:');
-  for (let [key, value] of formData.entries()) {
-    console.log(`  ${key}:`, value);
-  }
-
   try {
-    await api[method](url, formData, {
+    const url = editingNews ? `/api/news/${editingNews._id}` : '/api/news';
+    const method = editingNews ? 'put' : 'post';
+
+    const response = await api[method](url, formData, {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('token')}`,
         'Content-Type': 'multipart/form-data'
       }
     });
 
-    console.log('✅ Notícia enviada com sucesso!');
+    // ✅ Logs importantes pós-cadastro
+    console.log('✅ Notícia cadastrada ou atualizada com sucesso!');
+    console.log('📝 Dados da notícia:', response.data);
+    console.log('🔗 URL do item cadastrado:', response.data?.imageUrl || 'Sem imagem');
+    console.log('▶️ Link do vídeo (se houver):', response.data?.videoUrl || 'Sem vídeo');
 
     setMessage({
       type: 'success',
@@ -109,11 +104,7 @@ const handleNewsSubmit = async (e) => {
     resetNewsForm();
     fetchNewsList();
   } catch (err) {
-    console.error('❌ Erro ao processar notícia:', err);
-    console.log('🧵 Resposta:', err.response?.data);
-    console.log('📡 Requisição:', err.request);
-    console.log('💬 Mensagem:', err.message);
-
+    console.error('Erro ao processar notícia:', err);
     setMessage({
       type: 'danger',
       text: err.response?.data?.message || 'Erro ao processar notícia'
@@ -148,7 +139,7 @@ const handleMediaSubmit = async (e) => {
   }
 
   try {
-    await api[method](url, formData, {
+    const response = await api[method](url, formData, {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('token')}`,
         'Content-Type': 'multipart/form-data'
@@ -156,6 +147,9 @@ const handleMediaSubmit = async (e) => {
     });
 
     console.log('✅ Música enviada com sucesso!');
+    console.log('📝 Dados da música:', response.data);
+    console.log('🔗 URL do arquivo:', response.data?.fileUrl || 'Sem arquivo');
+    console.log('🖼️ Thumbnail:', response.data?.thumbnailUrl || 'Sem thumbnail');
 
     setMessage({
       type: 'success',
