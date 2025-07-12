@@ -109,7 +109,11 @@ const NewsPage = () => {
               {article.imageUrl && (
                 <Card.Img
                   variant="top"
-                  src={article.imageUrl}
+                  src={
+                    article.imageUrl?.startsWith('http')
+                      ? article.imageUrl
+                      : `${process.env.REACT_APP_API_URL}${article.imageUrl}`
+                  }
                   alt={article.title}
                   style={{ height: '200px', objectFit: 'cover' }}
                   onError={(e) => {

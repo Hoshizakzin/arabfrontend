@@ -66,95 +66,91 @@ const AdminPanel = () => {
   };
 
   const handleNewsSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setMessage({ type: '', text: '' });
+  e.preventDefault();
+  setLoading(true);
+  setMessage({ type: '', text: '' });
 
-    const formData = new FormData();
-    formData.append('title', newsData.title);
-    formData.append('content', newsData.content);
-    formData.append('category', newsData.category);
-    if (newsData.videoUrl) formData.append('videoUrl', newsData.videoUrl);
-    if (newsImage) formData.append('image', newsImage);
+  const formData = new FormData();
+  formData.append('title', newsData.title);
+  formData.append('content', newsData.content);
+  formData.append('category', newsData.category);
+  if (newsData.videoUrl) formData.append('videoUrl', newsData.videoUrl);
+  if (newsImage) formData.append('image', newsImage);
 
-    try {
-      const url = editingNews
-        ? `${process.env.REACT_APP_API_URL}/api/news/${editingNews._id}`
-        : `${process.env.REACT_APP_API_URL}/api/news`;
-      const method = editingNews ? 'put' : 'post';
+  try {
+    const url = editingNews ? `/api/news/${editingNews._id}` : '/api/news';
+    const method = editingNews ? 'put' : 'post';
 
-      await api[method](editingNews ? `/api/news/${editingNews._id}` : '/api/news', formData, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'multipart/form-data'
-        }
-      });
+    await api[method](url, formData, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        'Content-Type': 'multipart/form-data'
+      }
+    });
 
-      setMessage({
-        type: 'success',
-        text: editingNews
-          ? 'Notícia atualizada com sucesso!'
-          : 'Notícia publicada com sucesso!'
-      });
+    setMessage({
+      type: 'success',
+      text: editingNews
+        ? 'Notícia atualizada com sucesso!'
+        : 'Notícia publicada com sucesso!'
+    });
 
-      resetNewsForm();
-      fetchNewsList();
-    } catch (err) {
-      console.error('Erro ao processar notícia:', err);
-      setMessage({
-        type: 'danger',
-        text: err.response?.data?.message || 'Erro ao processar notícia'
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+    resetNewsForm();
+    fetchNewsList();
+  } catch (err) {
+    console.error('Erro ao processar notícia:', err);
+    setMessage({
+      type: 'danger',
+      text: err.response?.data?.message || 'Erro ao processar notícia'
+    });
+  } finally {
+    setLoading(false);
+  }
+};
 
-  const handleMediaSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setMessage({ type: '', text: '' });
+const handleMediaSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  setMessage({ type: '', text: '' });
 
-    const formData = new FormData();
-    formData.append('title', mediaData.title);
-    formData.append('artist', mediaData.artist);
-    formData.append('category', 'music');
-    if (mediaFile) formData.append('file', mediaFile);
-    if (mediaThumbnail) formData.append('thumbnail', mediaThumbnail);
+  const formData = new FormData();
+  formData.append('title', mediaData.title);
+  formData.append('artist', mediaData.artist);
+  formData.append('category', 'music');
+  if (mediaFile) formData.append('file', mediaFile);
+  if (mediaThumbnail) formData.append('thumbnail', mediaThumbnail);
 
-    try {
-      const url = editingMedia
-        ? `${process.env.REACT_APP_API_URL}/api/media/${editingMedia._id}`
-        : `${process.env.REACT_APP_API_URL}/api/media`;
-      const method = editingMedia ? 'put' : 'post';
+  try {
+    const url = editingMedia ? `/api/media/${editingMedia._id}` : '/api/media';
+    const method = editingMedia ? 'put' : 'post';
 
-      await api[method](editingMedia ? `/api/media/${editingMedia._id}` : '/api/media', formData, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'multipart/form-data'
-        }
-      });
+    await api[method](url, formData, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        'Content-Type': 'multipart/form-data'
+      }
+    });
 
-      setMessage({
-        type: 'success',
-        text: editingMedia
-          ? 'Música atualizada com sucesso!'
-          : 'Música enviada com sucesso!'
-      });
+    setMessage({
+      type: 'success',
+      text: editingMedia
+        ? 'Música atualizada com sucesso!'
+        : 'Música enviada com sucesso!'
+    });
 
-      resetMediaForm();
-      fetchMediaList();
-    } catch (err) {
-      console.error('Erro ao processar música:', err);
-      setMessage({
-        type: 'danger',
-        text: err.response?.data?.error ||
-          (editingMedia ? 'Erro ao atualizar música' : 'Erro ao enviar música')
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+    resetMediaForm();
+    fetchMediaList();
+  } catch (err) {
+    console.error('Erro ao processar música:', err);
+    setMessage({
+      type: 'danger',
+      text: err.response?.data?.error ||
+        (editingMedia ? 'Erro ao atualizar música' : 'Erro ao enviar música')
+    });
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleEditNews = (news) => {
     setEditingNews(news);
