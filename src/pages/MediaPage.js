@@ -122,11 +122,7 @@ const MediaPage = () => {
                   {media.thumbnailUrl && (
                     <div className="media-thumbnail">
                       <img
-                        src={
-                          media.thumbnailUrl.startsWith('http')
-                            ? media.thumbnailUrl
-                            : `${process.env.REACT_APP_API_URL}${media.thumbnailUrl}`
-                        }
+                        src={media.thumbnailUrl}
                         alt={`Capa de ${media.title}`}
                         className="thumbnail-image"
                       />

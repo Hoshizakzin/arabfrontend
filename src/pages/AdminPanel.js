@@ -65,7 +65,7 @@ const AdminPanel = () => {
     }
   };
 
-  const handleNewsSubmit = async (e) => {
+const handleNewsSubmit = async (e) => {
   e.preventDefault();
   setLoading(true);
   setMessage({ type: '', text: '' });
@@ -77,16 +77,27 @@ const AdminPanel = () => {
   if (newsData.videoUrl) formData.append('videoUrl', newsData.videoUrl);
   if (newsImage) formData.append('image', newsImage);
 
-  try {
-    const url = editingNews ? `/api/news/${editingNews._id}` : '/api/news';
-    const method = editingNews ? 'put' : 'post';
+  const url = editingNews ? `/api/news/${editingNews._id}` : '/api/news';
+  const method = editingNews ? 'put' : 'post';
 
+  console.log('🔎 [handleNewsSubmit]');
+  console.log('🔗 Método:', method.toUpperCase());
+  console.log('📎 URL final:', `${api.defaults.baseURL}${url}`);
+  console.log('🔐 Token:', localStorage.getItem('token'));
+  console.log('📦 FormData:');
+  for (let [key, value] of formData.entries()) {
+    console.log(`  ${key}:`, value);
+  }
+
+  try {
     await api[method](url, formData, {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('token')}`,
         'Content-Type': 'multipart/form-data'
       }
     });
+
+    console.log('✅ Notícia enviada com sucesso!');
 
     setMessage({
       type: 'success',
@@ -98,7 +109,11 @@ const AdminPanel = () => {
     resetNewsForm();
     fetchNewsList();
   } catch (err) {
-    console.error('Erro ao processar notícia:', err);
+    console.error('❌ Erro ao processar notícia:', err);
+    console.log('🧵 Resposta:', err.response?.data);
+    console.log('📡 Requisição:', err.request);
+    console.log('💬 Mensagem:', err.message);
+
     setMessage({
       type: 'danger',
       text: err.response?.data?.message || 'Erro ao processar notícia'
@@ -120,16 +135,27 @@ const handleMediaSubmit = async (e) => {
   if (mediaFile) formData.append('file', mediaFile);
   if (mediaThumbnail) formData.append('thumbnail', mediaThumbnail);
 
-  try {
-    const url = editingMedia ? `/api/media/${editingMedia._id}` : '/api/media';
-    const method = editingMedia ? 'put' : 'post';
+  const url = editingMedia ? `/api/media/${editingMedia._id}` : '/api/media';
+  const method = editingMedia ? 'put' : 'post';
 
+  console.log('🔎 [handleMediaSubmit]');
+  console.log('🔗 Método:', method.toUpperCase());
+  console.log('📎 URL final:', `${api.defaults.baseURL}${url}`);
+  console.log('🔐 Token:', localStorage.getItem('token'));
+  console.log('📦 FormData:');
+  for (let [key, value] of formData.entries()) {
+    console.log(`  ${key}:`, value);
+  }
+
+  try {
     await api[method](url, formData, {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('token')}`,
         'Content-Type': 'multipart/form-data'
       }
     });
+
+    console.log('✅ Música enviada com sucesso!');
 
     setMessage({
       type: 'success',
@@ -141,7 +167,11 @@ const handleMediaSubmit = async (e) => {
     resetMediaForm();
     fetchMediaList();
   } catch (err) {
-    console.error('Erro ao processar música:', err);
+    console.error('❌ Erro ao processar música:', err);
+    console.log('🧵 Resposta:', err.response?.data);
+    console.log('📡 Requisição:', err.request);
+    console.log('💬 Mensagem:', err.message);
+
     setMessage({
       type: 'danger',
       text: err.response?.data?.error ||
