@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { Container, Row, Col, Card, Button, Form, Spinner, Alert } from 'react-bootstrap';
 import axios from 'axios';
 import { FaPlay, FaPause, FaDownload } from 'react-icons/fa';
@@ -18,10 +19,7 @@ const MediaPage = () => {
       try {
         setIsLoading(true);
         setError(null);
-        console.log('📡 Buscando mídias da API...');
-
         const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/media`);
-        console.log('🎶 Mídias recebidas:', res.data);
         setMediaList(Array.isArray(res.data) ? res.data : []);
       } catch (err) {
         console.error('❌ Erro ao carregar mídias:', err);
@@ -53,7 +51,6 @@ const MediaPage = () => {
     newAudio.play()
       .then(() => {
         setCurrentMedia(media);
-        console.log('▶️ Tocando:', media.title);
       })
       .catch(err => {
         console.error('❌ Erro ao reproduzir áudio:', err);
@@ -126,16 +123,6 @@ const MediaPage = () => {
                         alt={`Capa de ${media.title}`}
                         className="thumbnail-image"
                       />
-                      <button
-                        className="play-button"
-                        onClick={() =>
-                          currentMedia?._id === media._id
-                            ? handlePause()
-                            : handlePlayMedia(media)
-                        }
-                      >
-                        {currentMedia?._id === media._id ? <FaPause /> : <FaPlay />}
-                      </button>
                     </div>
                   )}
                   <Card.Body className="d-flex flex-column">
@@ -149,15 +136,12 @@ const MediaPage = () => {
                         {new Date(media.createdAt).toLocaleDateString('pt-BR')}
                       </span>
                       <Button
-                        variant="outline-dark"
-                        size="sm"
-                        className="download-button"
-                        onClick={() =>
-                          window.open(`${process.env.REACT_APP_API_URL}/api/media/download/${media._id}`, '_blank')
-                        }
+                        as={Link}
+                        to={`/media/${media._id}`}
+                        variant="outline-primary"
+                        className="mt-2"
                       >
-                        <FaDownload className="me-1" />
-                        Baixar
+                        Ver Mais
                       </Button>
                     </div>
                   </Card.Body>

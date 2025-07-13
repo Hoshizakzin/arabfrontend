@@ -7,6 +7,7 @@ import HomePage from './pages/HomePage';
 import NewsPage from './pages/NewsPage';
 import NewsDetailPage from './pages/NewsDetailPage';
 import MediaPage from './pages/MediaPage';
+import MediaDetailPage from './pages/MediaDetailPage';
 import LoginPage from './pages/LoginPage';
 import AdminPanel from './pages/AdminPanel';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -78,6 +79,7 @@ function App() {
           <Route path="/news" element={<NewsPage />} />
           <Route path="/news/:id" element={<NewsDetailPage />} />
           <Route path="/media" element={<MediaPage />} />
+          <Route path="/media/:id" element={<MediaDetailPage />} />
           <Route path="/login" element={<LoginPage setIsAuthenticated={setIsAuthenticated} />} />
           
           <Route element={<ProtectedRoute />}>
