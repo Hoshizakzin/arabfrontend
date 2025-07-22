@@ -63,6 +63,38 @@ const NewsDetailPage = () => {
             </Button>
           )}
 
+        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginTop: '1rem' }}>
+            <Button
+              variant="outline-success"
+              className="share-button"
+              onClick={() => {
+                if (navigator.share) {
+                  navigator
+                    .share({
+                      title: article.title,
+                      text: 'Veja esta mídia incrível!',
+                      url: `${window.location.origin}/news/${article._id}`,
+                    })
+                    .catch((error) => console.log('Erro ao partilhar:', error));
+                } else {
+                  alert('O compartilhamento direto não é suportado neste navegador. Copie o link com o botão!');
+                }
+              }}
+            >
+              Partilhar
+            </Button>
+
+            <Button
+              variant="outline-secondary"
+              className="share-button"
+              onClick={() => {
+                navigator.clipboard.writeText(`${window.location.origin}/news/${article._id}`);
+                alert('Link copiado para a área de transferência!');
+              }}
+            >
+              Copiar Link
+            </Button>
+          </div>
           <div className="text-muted mt-5">
             Publicado em: {new Date(article.createdAt).toLocaleDateString('pt-BR')}
           </div>

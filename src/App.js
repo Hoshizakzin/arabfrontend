@@ -1,7 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
-import { FaFacebook, FaYoutube, FaSoundcloud } from 'react-icons/fa';
+import { FaWhatsapp } from 'react-icons/fa';
 import { Navbar, Nav, Container } from 'react-bootstrap';
 import HomePage from './pages/HomePage';
 import NewsPage from './pages/NewsPage';
@@ -39,7 +39,7 @@ function App() {
     <>
       <Navbar bg="dark" variant="dark" expand="lg">
         <Container>
-          <Navbar.Brand as={Link} to="/">Árabes</Navbar.Brand>
+          <Navbar.Brand as={Link} to="/">INTELIGÊNCIA MALUCA</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             {/* Itens à esquerda */}
@@ -55,17 +55,14 @@ function App() {
             </Nav>
 
             <Nav className="ms-auto">
-              <Nav.Link as="a" href="https://www.facebook.com/profile.php?id=61576591880951" 
-                target="_blank" rel="noopener noreferrer">
-                <FaFacebook />
-              </Nav.Link>
-              <Nav.Link as="a" href="https://youtube.com/@arabeoficial?si=da9ixNZnXbZTb9n9" 
-                target="_blank" rel="noopener noreferrer">
-                <FaYoutube />
-              </Nav.Link>
-              <Nav.Link as="a" href="https://m.soundcloud.com/mmodelo-filho-da-luisa-280257679?utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing" 
-                target="_blank" rel="noopener noreferrer">
-                <FaSoundcloud />
+              <Nav.Link
+                as="a"
+                href="https://wa.me/244931734266"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: 'white', fontSize: '1.5rem' }}
+              >
+                <FaWhatsapp />
               </Nav.Link>
             </Nav>
           </Navbar.Collapse>

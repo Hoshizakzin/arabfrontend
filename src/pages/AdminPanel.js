@@ -146,11 +146,6 @@ const handleMediaSubmit = async (e) => {
       }
     });
 
-    console.log('✅ Música enviada com sucesso!');
-    console.log('📝 Dados da música:', response.data);
-    console.log('🔗 URL do arquivo:', response.data?.fileUrl || 'Sem arquivo');
-    console.log('🖼️ Thumbnail:', response.data?.thumbnailUrl || 'Sem thumbnail');
-
     setMessage({
       type: 'success',
       text: editingMedia

@@ -6,36 +6,41 @@ import './HomePage.css';
 const HomePage = () => {
   const miniCards = [
     {
-      id: 1,
-      image: '/arabes1.jpg',
-      text: 'Gang',
-    },
-    {
       id: 2,
       image: '/imaluca.jpg',
       text: 'Inteligência Maluca!',
     },
     {
+      id: 1,
+      image: '/arabes1.jpg',
+      text: 'Gang',
+    },
+    {
       id: 3,
       image: '/arabes2.jpg',
-      text: 'Gang',
+      text: 'Para artes e artistas',
     }
   ];
 
   return (
     <Container className="home-page">
-      <h1 className="text-center my-5">Bem-vindo ao blog dos Árabes</h1>
+      <h1 className="text-center my-5">Bem-vindo ao nosso espaço!</h1>
 
       {/* Seção principal */}
       <Card className="shadow-lg mb-5">
         <Card.Body className="text-center">
-          <Card.Title className="display-4 mb-4">🎵 Notícias & Músicas</Card.Title>
+          <Card.Title className="display-4 mb-4">🎵 Artistas & Músicas</Card.Title>
           <Card.Text className="lead">
-            Descubra os últimos lançamentos e as fofocas mais quentes sobre o grupo!
+            Descubra os últimos lançamentos e as novidades mais quentes do momento!
           </Card.Text>
           <div className="d-flex justify-content-center mt-3">
             <Button as={Link} to="/media" variant="primary" size="lg">Ver Músicas</Button>
             <Button as={Link} to="/news" variant="primary" size="lg" className="ms-2">Ver Notícias</Button>
+            <Button as="a"
+                href="https://wa.me/244931734266"
+                target="_blank"
+                rel="noopener noreferrer" variant="primary" size="lg" className="ms-2"
+            >Contactar</Button>
           </div>
         </Card.Body>
       </Card>

@@ -1,9 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { ButtonGroup } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import { Container, Card, Button, Spinner, Alert } from 'react-bootstrap';
 import { FaPlay, FaPause, FaDownload } from 'react-icons/fa';
 import axios from 'axios';
-import './MediaPage.css'; // Reutiliza o estilo do MediaPage
+import './MediaPage.css';
+import './MediaDetailPage.css';
 
 const MediaDetailPage = () => {
   const { id } = useParams();
@@ -114,17 +116,49 @@ const MediaDetailPage = () => {
               <span className="media-date text-muted">
                 Publicado em: {new Date(media.createdAt).toLocaleDateString('pt-BR')}
               </span>
+              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginTop: '1rem' }}>
+                <Button
+                  variant="outline-dark"
+                  className="share-button"
+                  onClick={() =>
+                    window.open(`${process.env.REACT_APP_API_URL}/api/media/download/${media._id}`, '_blank')
+                  }
+                >
+                  <FaDownload className="me-2" />
+                  Baixar
+                </Button>
 
-              <Button
-                variant="outline-dark"
-                className="mt-3"
-                onClick={() =>
-                  window.open(`${process.env.REACT_APP_API_URL}/api/media/download/${media._id}`, '_blank')
-                }
-              >
-                <FaDownload className="me-2" />
-                Baixar
-              </Button>
+                <Button
+                  variant="outline-success"
+                  className="share-button"
+                  onClick={() => {
+                    if (navigator.share) {
+                      navigator
+                        .share({
+                          title: media.title,
+                          text: 'Veja esta mídia incrível!',
+                          url: `${window.location.origin}/media/${media._id}`,
+                        })
+                        .catch((error) => console.log('Erro ao partilhar:', error));
+                    } else {
+                      alert('O compartilhamento direto não é suportado neste navegador. Copie o link com o botão!');
+                    }
+                  }}
+                >
+                  Partilhar
+                </Button>
+
+                <Button
+                  variant="outline-secondary"
+                  className="share-button"
+                  onClick={() => {
+                    navigator.clipboard.writeText(`${window.location.origin}/media/${media._id}`);
+                    alert('Link copiado para a área de transferência!');
+                  }}
+                >
+                  Copiar Link
+                </Button>
+              </div>
             </div>
           </Card.Body>
         </div>
