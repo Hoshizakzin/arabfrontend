@@ -33,15 +33,23 @@ const HomePage = () => {
           <Card.Text className="lead">
             Descubra os últimos lançamentos e as novidades mais quentes do momento!
           </Card.Text>
-          <div className="d-flex justify-content-center mt-3">
-            <Button as={Link} to="/media" variant="primary" size="lg">Ver Músicas</Button>
-            <Button as={Link} to="/news" variant="primary" size="lg" className="ms-2">Ver Notícias</Button>
-            <Button as="a"
+         <div className="container mt-3">
+          <div className="row g-2 justify-content-center">
+            <div className="col-12 col-md-auto">
+              <Button as={Link} to="/media" variant="primary" size="lg" className="w-100">Ver Músicas</Button>
+            </div>
+            <div className="col-12 col-md-auto">
+              <Button as={Link} to="/news" variant="primary" size="lg" className="w-100">Ver Notícias</Button>
+            </div>
+            <div className="col-12 col-md-auto">
+              <Button as="a"
                 href="https://wa.me/244931734266"
                 target="_blank"
-                rel="noopener noreferrer" variant="primary" size="lg" className="ms-2"
-            >Contactar</Button>
+                rel="noopener noreferrer" variant="primary" size="lg" className="w-100"
+              >Contactar</Button>
+            </div>
           </div>
+        </div>
         </Card.Body>
       </Card>
 
