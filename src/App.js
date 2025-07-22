@@ -11,6 +11,7 @@ import MediaDetailPage from './pages/MediaDetailPage';
 import LoginPage from './pages/LoginPage';
 import AdminPanel from './pages/AdminPanel';
 import ProtectedRoute from './components/ProtectedRoute';
+import './App.css';
 
 function AppWrapper() {
   return (
@@ -39,7 +40,7 @@ function App() {
     <>
       <Navbar bg="dark" variant="dark" expand="lg">
         <Container>
-          <Navbar.Brand as={Link} to="/">INTELIGÊNCIA MALUCA</Navbar.Brand>
+          <Navbar.Brand as={Link} to="/"><img src="/im_logo.png" alt="imagem logo" id="logo_header"/></Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             {/* Itens à esquerda */}
